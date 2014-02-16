@@ -86,6 +86,7 @@ strava
 .texmf-var
 .thumbnails
 Videos
+.vim/temp
 .viminfo
 .virt-manager
 .VirtualBox
