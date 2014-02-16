@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+#
+# Initialization for this homedir setup. Will be run on pull/checkout/rebase.
+
+CWD=$(pwd)
+echo
+echo 'Reloading local environment...'
+
+# Run ~/.bashrc to pick up new commands or aliases
+echo ' -> loading .bashrc'
+. "$HOME/.bashrc"
+
+# Make sure Vundle is installed in .vim
+echo ' -> updating VIM bundles'
+git submodule update --init .vim/bundle/vundle
+vim -e -s +BundleInstall +qall -
+
+echo 'done!'

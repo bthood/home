@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+#
+# Initialize this homedir setup.
+
+HOOK_SRC="$HOME/.githooks"
+HOOK_DST="$HOME/.git/hooks"
+
+mkdir -p "$HOOK_DST"
+cp "$HOOK_SRC"/* "$HOOK_DST"
+git checkout master
