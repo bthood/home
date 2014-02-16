@@ -71,10 +71,10 @@ export VISUAL='vim'
 
 
 # History configuration
-export HISTCONTROL=ignoreboth:erasedups # don't put duplicates in history
+export HISTCONTROL=ignoreboth:erasedups         # don't put duplicates in history
 export HISTIGNORE='&:[bf]g:ls:h:clear:exit'
-export HISTSIZE=10000                                # increase or decrease the size of the history to '10,000'
-export HISTTIMEFORMAT='%Y-%m-%d_%H:%M:%S_%a  '        # makes history display in YYYY-MM-DD_HH:MM:SS_3CharWeekdaySpaceSpace format
+export HISTSIZE=10000                           # set history size to 10000
+export HISTTIMEFORMAT='%a %Y-%m-%d %H:%M:%S'    # makes history display DOW YYYY-MM-DD HH:MM:SS
 # Save commands in history & share in real time
 if [ ! -f $HOME/.bash_history ]; then touch $HOME/.bash_history; fi
 PROMPT_COMMAND="history -a && history -n; $PROMPT_COMMAND"
