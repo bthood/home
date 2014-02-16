@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+#
+# Utility to add a file to the homedir git ignore
+
+GREP="/bin/grep"
+if [ ! -x "$GREP" ]; then GREP="/usr/bin/grep"; fi
+
+# Common error-handling function
+error() {
+   echo "$1"
+   exit 1
+}
+
+if [ -z "$1" ]; then
+   error "Usage: gitignore <filename> [<filename> ...]"
+fi
+
+FILE=$(cd $(dirname $1); pwd)/$(basename $1) # get absolute path
+REPOSITORY=$(git rev-parse --show-toplevel 2>/dev/null)
+
+# Verify that the file/directory exists
+if [ ! -e "$FILE" ]; then
+   error "Error: '$FILE' does not exist"
+fi
+
+# Verify that the file/directory is in a git repository
+if [ -z $REPOSITORY ]; then
+   error "Error: '$(pwd)' is not in a git repository"
+elif [[ "$FILE" != $REPOSITORY* ]]; then
+   error "Error: '$FILE' not in current git repository ($REPOSITORY)"
+fi
+
+# Add the path minus the repo root to .gitignore
+PATH="${FILE#"$REPOSITORY/"}"
+
+if "$GREP" -xq "$PATH/\\?" "$REPOSITORY/.gitignore"; then
+   echo "Note: .gitignore already contains '$FILE'"
+else
+   echo $PATH >> "$REPOSITORY/.gitignore"
+fi
