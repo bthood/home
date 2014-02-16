@@ -1,0 +1,13 @@
+[user]
+	email = byron.hood@college.harvard.edu
+	name = Byron Hood
+[push]
+	default = current
+[alias]
+	st = status
+	co = checkout
+	cob = checkout -b
+	ci = commit -a
+	bd = branch -d
+	up = push
+	f = pull
