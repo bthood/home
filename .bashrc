@@ -50,7 +50,7 @@ if [ "$color_prompt" = yes ]; then
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
-unset color_prompt force_color_prompt
+unset color_prompt chroot time user_host cwd gitps1 prompt
 
 # If this is an xterm set the title to user@host:dir
 case "$TERM" in
@@ -110,6 +110,10 @@ fi
 
 # add SSH keys to running shell for easier SSHing
 ssh-add
+
+
+# add ~/bin to the PATH
+export PATH="$HOME/bin:${PATH#"$HOME/bin:"}"
 
 
 # Run .bashrc.local if it exists
