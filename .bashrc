@@ -37,7 +37,7 @@ else
 fi
 
 if [ "$color_prompt" = yes ]; then
-    source ~/bin/git-prompt.sh
+    source $HOME/bin/zz-git-prompt.sh
     export GIT_PS1_SHOWDIRTYSTATE=1
     export GIT_PS1_SHOWUPSTREAM="auto"
     chroot='${debian_chroot:+($debian_chroot)}'
