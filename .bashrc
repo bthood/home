@@ -5,12 +5,6 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
-# don't put duplicate lines in the history. See bash(1) for more options
-# don't overwrite GNU Midnight Commander's setting of `ignorespace'.
-HISTCONTROL=$HISTCONTROL${HISTCONTROL+:}ignoredups
-# ... or force ignoredups and ignorespace
-HISTCONTROL=ignoreboth
-
 # append to the history file, don't overwrite it
 shopt -s histappend
 
@@ -33,25 +27,16 @@ case "$TERM" in
     xterm-color) color_prompt=yes;;
 esac
 
-# uncomment for a colored prompt, if the terminal has the capability; turned
-# off by default to not distract the user: the focus in a terminal window
-# should be on the output of commands, not on the prompt
-force_color_prompt=yes
-
-if [ -n "$force_color_prompt" ]; then
-    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-	# We have color support; assume it's compliant with Ecma-48
-	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-	# a case would tend to support setf rather than setaf.)
-	color_prompt=yes
-    else
-	color_prompt=
-    fi
+if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+    # We have color support; assume it's compliant with Ecma-48
+    # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+    # a case would tend to support setf rather than setaf.)
+    color_prompt=yes
+else
+    color_prompt=
 fi
 
 if [ "$color_prompt" = yes ]; then
-    #PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\] \[\033[01;34m\]\w \$\[\033[00m\] '
-    #PS1='${debian_chroot:+($debian_chroot)}\[\033[36m\]\t\[\033[0m\] \[\033[01;32m\]\u@\h\[\033[00m\] \[\033[01;34m\]\w\[\033[00m\] \[\033[31m\]$(__git_ps1 "[%s] ")\[\033[0m\]\[\033[1;34m\]\$\[\033[0m\] '
     source ~/bin/git-prompt.sh
     export GIT_PS1_SHOWDIRTYSTATE=1
     export GIT_PS1_SHOWUPSTREAM="auto"
@@ -76,26 +61,35 @@ xterm*|rxvt*)
     ;;
 esac
 
-# enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
 
-    #alias grep='grep --color=auto'
-    #alias fgrep='fgrep --color=auto'
-    #alias egrep='egrep --color=auto'
-fi
+# Use VIM as the default editor and less as the pager
+export EDITOR='/usr/bin/vim'
+export LESS='-i -N -w  -z-4 -g -e -M -X -F -Q -R -P%t?f%f \'
+export LESSOPEN='|/usr/bin/lesspipe.sh %s 2>&-'        # use this if lesspipe.sh exists
+export LESS="-QR"                                # tell less not to beep and also display colours
+export PAGER='less -e'
+export VISUAL='vim'
 
-# some more ls aliases
-alias ll='ls -l'
-alias la='ls -A'
-alias l='ls -CF'
 
-# Put MATLAB in the PATH.
-export PATH="$PATH:/usr/local/MATLAB/R2011b/bin"
-export EDITOR=`which vim`
+# History configuration
+export HISTCONTROL=ignoreboth:erasedups # don't put duplicates in history
+export HISTIGNORE='&:[bf]g:ls:h:clear:exit'
+export HISTSIZE=10000                                # increase or decrease the size of the history to '10,000'
+export HISTTIMEFORMAT='%Y-%m-%d_%H:%M:%S_%a  '        # makes history display in YYYY-MM-DD_HH:MM:SS_3CharWeekdaySpaceSpace format
+# Save commands in history & share in real time
+if [ ! -f $HOME/.bash_history ]; then touch $HOME/.bash_history; fi
+PROMPT_COMMAND="history -a && history -n; $PROMPT_COMMAND"
+
+
+# Shell options
+set -b           # show background job status immediately
+set -o notify    # notify when background jobs finish
+set +o nounset   # needed for some completions
+setterm -blength 0  # disable bell
+shopt -s cdspell    # minor cd spell corrections
+shopt -s extglob nocaseglob no_empty_cmd_completion
+shopt -s histappend histreedit histverify
+
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
@@ -113,4 +107,12 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
 
+
+# add SSH keys to running shell for easier SSHing
 ssh-add
+
+
+# Run .bashrc.local if it exists
+if [ -f ~/.bashrc.local ]; then
+   . ~/.bashrc.local
+fi

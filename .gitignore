@@ -3,6 +3,7 @@
 .Xauthority
 .aptitude/
 .bash_history
+.bashrc.local
 .cache/
 .dbus/
 .dmrc
