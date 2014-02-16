@@ -1,0 +1,109 @@
+#/bin/sh
+#
+# A script to clear and reset the IPTables firewall to its default state. This
+# should be used to (re)set firewalls in environements not known to be secure.
+#
+# WARNING! This script will ERASE any existing firewall configuration.
+
+IPTABLES=`which iptables`
+ARGS='chs'
+MODE='server'
+
+# If we're not root, don't bother.
+if [ "`id -u`" != "0" ]; then
+  echo 'You need root privileges to access this script.'
+  echo 'If you are the red team, please go away.'
+  echo ''
+  exit
+fi
+
+# Parse command-line arguments
+while getopts $ARGS opt; do
+  case $opt in
+    'c')
+      echo 'Entering client mode... '
+      MODE='client'
+      ;;
+    's')
+      echo 'Entering server mode... '
+      MODE='server'
+      ;;
+    'h')
+      echo 'Usage: linux-firewall.sh [-c] [-h] [-s]'
+      echo "\n"
+      exit
+      ;;
+  esac
+done
+
+# Figure out the IP address and DNS server of the machine.
+echo 'Discovering IP address and DNS server... '
+IPADDR="127.0.0.1"
+DNSADDR="127.0.0.1"
+IP_ADDR_LINE=`/sbin/ifconfig eth0 | grep 'inet addr'`
+if [ $? = 0 ]; then
+  IPADDR=`echo $IP_ADDR_LINE | sed -e 's/[ ]*inet addr:\([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+\).*\?/\1/'`
+fi
+echo " -> IP:  $IPADDR"
+DNS_ADDR_LINE=`/bin/cat /etc/resolv.conf | grep 'nameserver'`
+if [ $? = 0 ]; then
+  DNSADDR=`echo $DNS_ADDR_LINE | cut -d ' ' -f 2`
+fi
+echo " -> DNS: $DNSADDR"
+
+# Shut down everything and slowly re-add it.
+echo -n 'Setting default policies to DROP... '
+${IPTABLES} -P INPUT DROP
+${IPTABLES} -P OUTPUT DROP
+${IPTABLES} -P FORWARD DROP
+echo 'done!'
+# Remove everything in all of the chains.
+echo -n 'Flushing existing IPtables chains... '
+${IPTABLES} -F INPUT
+${IPTABLES} -F OUTPUT
+${IPTABLES} -F FORWARD
+echo 'done!'
+# Remove any unused chains.
+echo -n 'Removing old user-defined chains... '
+userchains=`${IPTABLES} -L | grep -i chain | awk '{print $2}' | grep -v -e '\(INPUT\|OUTPUT\|FORWARD\)'`
+for chain in $userchains; do
+  ${IPTABLES} -F $chain
+done
+${IPTABLES} -X
+echo 'done!'
+
+# Create LOG_AND_ACCEPT and LOG_AND_REJECT targets.
+echo -n 'Creating logging targets... '
+${IPTABLES} -N LOG_AND_ACCEPT
+${IPTABLES} -A LOG_AND_ACCEPT -m limit --limit 10/minute --limit-burst 5 -j LOG --log-level 6 --log-prefix "[iptables] "
+${IPTABLES} -A LOG_AND_ACCEPT -j ACCEPT
+${IPTABLES} -N LOG_AND_REJECT
+${IPTABLES} -A LOG_AND_REJECT -m limit --limit 1/second --limit-burst 5 -j LOG --log-level 4 --log-prefix "[iptables] *** BLOCKED *** "
+${IPTABLES} -A LOG_AND_REJECT -j DROP
+echo 'done!'
+
+# Blackhole packets from illegal IP addresses.
+echo -n 'Blackholing packets from illegal IP addresses... '
+${IPTABLES} -A INPUT -p all -m addrtype --src-type UNSPEC,BLACKHOLE,UNREACHABLE,PROHIBIT,THROW,XRESOLVE -j LOG_AND_REJECT
+echo 'done!'
+
+# For client-mode, shut down all connections except those initiated locally,
+# permit HTTP(S) outbound, and allow DNS to the local DNS server.
+# For servers, shut down all connections; manually re-add services' ports.
+if [ "$MODE" = 'client' ]; then
+  echo -n 'Allowing connections initiated locally... '
+  ${IPTABLES} -A INPUT -p all -d "$IPADDR" -m state --state RELATED,ESTABLISHED -j LOG_AND_ACCEPT
+  echo 'done!'
+  echo -n 'Allowing HTTP and DNS outbound... '
+  ${IPTABLES} -A OUTPUT -p tcp -s "$IPADDR" --dport 80 -j LOG_AND_ACCEPT
+  ${IPTABLES} -A OUTPUT -p tcp -s "$IPADDR" --dport 443 -j LOG_AND_ACCEPT
+  ${IPTABLES} -A OUTPUT -p udp -s "$IPADDR" -d "$DNSADDR" --dport 53 -j LOG_AND_ACCEPT
+  echo 'done!'
+fi
+
+# Set all other packets to be rejected and logged.
+echo -n 'Setting up logging/dropping for all other packets... '
+${IPTABLES} -A INPUT -j LOG_AND_REJECT
+${IPTABLES} -A OUTPUT -j LOG_AND_REJECT
+${IPTABLES} -A FORWARD -j LOG_AND_REJECT
+echo 'done!'
