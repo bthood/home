@@ -1,0 +1,4 @@
+home
+====
+
+Skeleton home directory
