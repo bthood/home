@@ -64,9 +64,8 @@ esac
 
 # Use VIM as the default editor and less as the pager
 export EDITOR='/usr/bin/vim'
-export LESS='-i -N -w  -z-4 -g -e -M -X -F -Q -R -P%t?f%f \'
-export LESSOPEN='|/usr/bin/lesspipe.sh %s 2>&-'        # use this if lesspipe.sh exists
-export LESS="-QR"                                # tell less not to beep and also display colours
+export LESS='-i -N -w -z-4 -g -e -M -X -F -Q -R'
+export LESSOPEN='|/usr/bin/lesspipe.sh %s 2>&-'
 export PAGER='less -e'
 export VISUAL='vim'
 
