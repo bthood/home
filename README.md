@@ -1,4 +1,0 @@
-home
-====
-
-Skeleton home directory
