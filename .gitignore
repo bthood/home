@@ -97,3 +97,20 @@ Videos
 .xscreensaver
 .xsession*
 .gimp-2.8
+.CFUserTextEncoding
+.DS_Store
+.Trash
+.bash_profile
+.bundle
+.cups
+.gemrc
+.rbenv
+.vim/.netrwhist
+Applications
+Library
+Movies
+bin/apiget
+Dev\ Tools
+Code
+Desktop
+Public
