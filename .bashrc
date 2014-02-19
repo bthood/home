@@ -39,7 +39,7 @@ fi
 if [ "$color_prompt" = yes ]; then
     source $HOME/bin/zz-git-prompt.sh
     export GIT_PS1_SHOWDIRTYSTATE=1
-    export GIT_PS1_SHOWUPSTREAM="auto"
+    export GIT_PS1_SHOWUPSTREAM=1
     chroot='${debian_chroot:+($debian_chroot)}'
     time='\[\e[00;36m\]\t\[\e[0m\]'
     user_host='\[\e[01;32m\]\u@\h\[\e[0m\]'

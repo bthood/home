@@ -9,5 +9,8 @@
 	cob = checkout -b
 	ci = commit -a
 	bd = branch -d
-	up = push
+	up = push -u origin
 	f = pull
+	sq = merge --squash
+	changes = diff HEAD^ HEAD
+	bl = branch
