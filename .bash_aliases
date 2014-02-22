@@ -22,7 +22,6 @@ alias l='ls -CF'
 
 
 # git helpers
-alias gmpr='git co master && echo `git rev-parse --abbrev-ref HEAD`'
 alias gti='git'
 alias igt='git'
 alias gt='git'
