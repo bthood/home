@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [ "x$1" != "x" ]; then
+    BRANCH=$1
+else
+    BRANCH="$CURRENT_BRANCH"
+fi
+
+# Update to the latest version of master before safe-deleting the local branch
+if [ "$CURRENT_BRANCH" != "master" ]; then
+   git checkout master
+fi
+git pull
+
+if [ "$BRANCH" != "master" ]; then
+    git branch -d "$BRANCH"
+fi
+git remote prune origin
