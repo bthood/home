@@ -14,3 +14,8 @@
 	sq = merge --squash
 	changes = diff HEAD^ HEAD
 	bl = branch
+[color]
+	diff = always
+	status = always
+	branch = always
+	grep = always

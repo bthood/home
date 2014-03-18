@@ -64,7 +64,7 @@ esac
 
 # Use VIM as the default editor and less as the pager
 export EDITOR='/usr/bin/vim'
-export LESS='-i -N -w -z-4 -g -e -M -X -F -Q -R'
+export LESS='-i -w -z-4 -g -e -M -X -F -Q -R'
 export LESSOPEN='|/usr/bin/lesspipe.sh %s 2>&-'
 export PAGER='less -e'
 export VISUAL='vim'
