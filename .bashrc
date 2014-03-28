@@ -15,7 +15,7 @@ shopt -s histappend
 shopt -s checkwinsize
 
 # make less more friendly for non-text input files, see lesspipe(1)
-#[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
 # set variable identifying the chroot you work in (used in the prompt below)
 if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
@@ -38,6 +38,7 @@ fi
 
 if [ "$color_prompt" = yes ]; then
     source $HOME/bin/zz-git-prompt.sh
+    source $HOME/bin/zz-git-completion.sh
     export GIT_PS1_SHOWDIRTYSTATE=1
     export GIT_PS1_SHOWUPSTREAM=1
     chroot='${debian_chroot:+($debian_chroot)}'
@@ -75,9 +76,6 @@ export HISTCONTROL=ignoreboth:erasedups         # don't put duplicates in histor
 export HISTIGNORE='&:[bf]g:ls:h:clear:exit'
 export HISTSIZE=10000                           # set history size to 10000
 export HISTTIMEFORMAT='%a %Y-%m-%d %H:%M:%S'    # makes history display DOW YYYY-MM-DD HH:MM:SS
-# Save commands in history & share in real time
-if [ ! -f $HOME/.bash_history ]; then touch $HOME/.bash_history; fi
-PROMPT_COMMAND="history -a && history -n; $PROMPT_COMMAND"
 
 
 # Shell options
