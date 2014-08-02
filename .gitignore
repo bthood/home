@@ -114,3 +114,11 @@ Dev\ Tools
 Code
 Desktop
 Public
+.aws
+.kde
+.netrc
+.npm
+.PyCharm30
+bin/backup-*
+bin/sync-ssh-keys
+.ssh
