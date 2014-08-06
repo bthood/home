@@ -14,6 +14,8 @@ fi
 # update the alias file with 'aliases'
 alias aliases="source $HOME/.bash_aliases"
 
+# pushd
+alias pd='pushd'
 
 # some more ls aliases
 alias ll='ls -l'
