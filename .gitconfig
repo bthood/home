@@ -16,6 +16,8 @@
 	bl = branch
 	sl = stash list
 	sp = stash pop
+	cp = cherry-pick
+	rph = rev-parse HEAD
 [color]
 	diff = always
 	status = always
