@@ -8,3 +8,6 @@ HOOK_DST="$HOME/.git/hooks"
 mkdir -p "$HOOK_DST"
 cp "$HOOK_SRC"/* "$HOOK_DST"
 git checkout master
+
+mkdir -p "$HOME/.vim/temp"
+source "$HOME/.bashrc"
