@@ -2,6 +2,11 @@
 #
 # Initialize this homedir setup.
 
+CWD=$(pwd)
+if [ "$CWD" != "$HOME" ]; then
+   rsync -av "$CWD/" "$HOME/"
+fi
+
 HOOK_SRC="$HOME/.githooks"
 HOOK_DST="$HOME/.git/hooks"
 
